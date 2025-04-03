@@ -1,0 +1,32 @@
+{
+  "name": "travelsbackendnode",
+  "version": "1.0.0",
+  "description": "a node backend for travels app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vicentlozano/travelsBackendNode.git"
+  },
+  "keywords": [
+    "node",
+    "bakend",
+    "mariadb",
+    "sql"
+  ],
+  "author": "vicent lozano hervas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vicentlozano/travelsBackendNode/issues"
+  },
+  "homepage": "https://github.com/vicentlozano/travelsBackendNode#readme",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mariadb": "^3.4.1"
+  }
+}
