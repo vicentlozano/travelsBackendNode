@@ -6,10 +6,10 @@ dotenv.config();
 
 exports.login = async (req, res) => {
   if (req.body.hasOwnProperty("user") && req.body.hasOwnProperty("hash")) {
-    const query = `select * from Users where Email = '${req.body.user}' and Pass = '${req.body.hash}'`;
+    const query = `select * from users where email = '${req.body.user}' and password = '${req.body.hash}'`;
     db.executeQuery(query, (error, result) => {
-      if (error || result.recordset.length < 1) {
-        res.status(200).send({
+      if (error || result[0].length < 1) {
+        res.status(500).send({
           error: {
             status: true,
             code: 54321,
@@ -21,21 +21,21 @@ exports.login = async (req, res) => {
             user: "",
             level: 0,
           },
-         
         });
       } else {
         const payload = { check: true };
         const token = jwt.sign(payload, process.env.KEY_SECRET, {
           expiresIn: 43200,
-          audience: result.recordset[0].ID_User.toString(),
+          audience: result[0].id.toString(),
         });
         res.status(200).send({
           error: { status: false, code: 0, source: "" },
           data: {
             token: token,
-            idUser: result.recordset[0].ID_User,
-            user: result.recordset[0].Email,
-            level: result.recordset[0].AccessLevel,
+            idUser: result[0].id,
+            email: result[0].email,
+            name: result[0].name,
+            role: result[0].role,
           },
         });
       }
@@ -68,24 +68,25 @@ exports.loginToken = async (req, res) => {
     }
     if (decoded) {
       const userId = decoded.aud;
-      const query = `select * from Users where ID_User = ${userId}`;
+      const query = `select * from users where id = ${userId}`;
       db.executeQuery(query, (error, result) => {
-        if (result.recordset.length > 0) {
-          res.status(200).send({
-            error: { status: false, code: 0, source: "" },
-            data: {
-              token: token,
-              idUser: result.recordset[0].ID_User,
-              user: result.recordset[0].Email,
-              level: result.recordset[0].AccessLevel,
-            },
-          });
-        } else {
+        if (error) {
           res.status(500).send({
             error: {
               status: true,
               code: 54321,
               source: "wrongCredentials",
+            },
+          });
+        } else {
+          res.status(200).send({
+            error: { status: false, code: 0, source: "" },
+            data: {
+              token: token,
+              userId: result[0].id,
+              name: result[0].name,
+              email: result[0].email,
+              role: result[0].role,
             },
           });
         }

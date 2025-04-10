@@ -2,7 +2,7 @@
 module.exports = function (app) {
   let login = require("../../controllers/loginController");
 
-  app.route(`/wsTraslations/Login/wsLogin`).post(login.login);
+  app.route(`/wsTravels/Login/wsLogin`).post(login.login);
 
-  app.route(`/wsTraslations/Login/wsLoginToken`).post(login.loginToken);
+  app.route(`/wsTravels/Login/wsLoginToken`).post(login.loginToken);
 };

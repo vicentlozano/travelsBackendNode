@@ -9,12 +9,14 @@ BigInt.prototype.toJSON = function () {
 };
 
 require("dotenv").config();
-
+const cors = require("cors");
 let express = require("express"),
   app = express(),
   bodyParser = require("body-parser");
-  jwt = require("jsonwebtoken");
-let port = 7002;
+jwt = require("jsonwebtoken");
+const port = 7002;
+// for developers
+app.use(cors());
 
 // Increase request size limit to 50 MB to allow receiving base64 imgs
 app.use(express.json({ limit: "50mb" }));
@@ -48,7 +50,7 @@ app.use(function (req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// let login = require("./src/routes/Login/loginRoutes.js");
+let login = require("./src/routes/Login/loginRoutes.js");
 // let codes = require("./src/routes/Control/codesRoutes.js");
 // let register = require("./src/routes/Register/registerRoutes.js");
 // let home = require("./src/routes/Home/homeRoutes.js");
@@ -56,10 +58,10 @@ app.use(bodyParser.json());
 // let section = require("./src/routes/Control/sectionsRoutes.js");
 // let resetPassword = require("./src/routes/RessetPassword/resetPasswordRoutes.js");
 // let user = require("./src/routes/Control/userRoutes.js");
- let travels = require("./src/routes/Travels/travelsRoutes.js");
+let travels = require("./src/routes/Travels/travelsRoutes.js");
+let messages = require("./src/routes/Messages/messagesRoutes.js");
 
-
-// login(app);
+login(app);
 // codes(app);
 // register(app);
 // home(app);
@@ -67,12 +69,11 @@ app.use(bodyParser.json());
 // section(app);
 // resetPassword(app);
 // user(app);
-travels(app)
+messages(app);
+travels(app);
 
 app.listen(port, () => {
-  console.log(
-    `Backend Travels app listening at http://localhost:${port}`
-  );
+  console.log(`Backend Travels app listening at http://localhost:${port}`);
 });
 
 function checkNodeMinVersion() {
