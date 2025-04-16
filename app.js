@@ -51,24 +51,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 let login = require("./src/routes/Login/loginRoutes.js");
-// let codes = require("./src/routes/Control/codesRoutes.js");
-// let register = require("./src/routes/Register/registerRoutes.js");
-// let home = require("./src/routes/Home/homeRoutes.js");
-// let projects = require("./src/routes/Control/projectsRoutes.js");
-// let section = require("./src/routes/Control/sectionsRoutes.js");
-// let resetPassword = require("./src/routes/RessetPassword/resetPasswordRoutes.js");
-// let user = require("./src/routes/Control/userRoutes.js");
+let register = require("./src/routes/Register/registerRoutes.js");
 let travels = require("./src/routes/Travels/travelsRoutes.js");
 let messages = require("./src/routes/Messages/messagesRoutes.js");
 
 login(app);
-// codes(app);
-// register(app);
-// home(app);
-// projects(app);
-// section(app);
-// resetPassword(app);
-// user(app);
+register(app);
 messages(app);
 travels(app);
 
