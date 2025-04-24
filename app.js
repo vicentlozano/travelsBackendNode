@@ -12,7 +12,7 @@ require("dotenv").config();
 const cors = require("cors");
 let express = require("express"),
   app = express(),
-  bodyParser = require("body-parser");
+  bodyParser = require("body-parser")
 jwt = require("jsonwebtoken");
 const port = 7002;
 // for developers
