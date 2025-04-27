@@ -1,11 +1,13 @@
 "use strict";
+const multer = require("multer");
+
+// Usamos multer sin configuración especial: almacena en memoria
+const upload = multer({ storage: multer.memoryStorage() });
+
 module.exports = function (app) {
-  let register = require("../../controllers/registerController");
-  let jwt = require("../../utils/jwtToken")
+  const register = require("../../controllers/registerController");
 
-
-  app.route(`/wsTravels/Users/wsSignUp`).post(register.registerNewUser);
+  app
+    .route(`/wsTravels/Users/wsSignUp`)
+    .post(upload.single('avatar'), register.registerNewUser);
 };
-
-
-

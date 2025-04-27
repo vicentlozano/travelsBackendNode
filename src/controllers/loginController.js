@@ -36,6 +36,7 @@ exports.login = async (req, res) => {
             email: result[0].email,
             name: result[0].name,
             role: result[0].role,
+            avatar: result[0].avatar,
           },
         });
       }
@@ -87,6 +88,7 @@ exports.loginToken = async (req, res) => {
               name: result[0].name,
               email: result[0].email,
               role: result[0].role,
+              avatar: result[0].avatar,
             },
           });
         }
