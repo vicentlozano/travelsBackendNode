@@ -10,4 +10,7 @@ module.exports = function (app) {
   app
     .route(`/wsTravels/Users/wsSignUp`)
     .post(upload.single('avatar'), register.registerNewUser);
+    app
+    .route(`/wsTravels/Users/wsVerifyEmail`)
+    .post(register.verifyEmail);
 };
