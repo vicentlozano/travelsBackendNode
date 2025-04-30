@@ -23,11 +23,14 @@
   },
   "homepage": "https://github.com/vicentlozano/travelsBackendNode#readme",
   "dependencies": {
-    "body-parser": "^2.2.0",
+    "@aws-sdk/client-s3": "^3.797.0",
+    "aws-sdk": "^2.1692.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mariadb": "^3.4.1"
+    "mariadb": "^3.4.1",
+    "multer": "^1.4.5-lts.2",
+    "nodemailer": "^6.10.1"
   }
 }

@@ -9,7 +9,7 @@ exports.getAllTravels = async (req, res) => {
   FROM travels t
   LEFT JOIN travel_places tp ON t.id = tp.travel_id
   GROUP BY t.id
-`;;
+`;
   db.executeQuery(query, (error, result) => {
     if (error) {
       res.status(500).send({
@@ -20,7 +20,6 @@ exports.getAllTravels = async (req, res) => {
         },
       });
     } else {
-      console.log(result)
       res.status(200).send({
         error: { status: false, code: 0, source: "" },
         data: result,
@@ -81,7 +80,6 @@ exports.createTravel = async (req, res) => {
         });
       } else {
         let idInserted = result.insertId;
-        console.log(result);
         let values = "";
         places.forEach((place, index) => {
           if (index === places.length - 1) {

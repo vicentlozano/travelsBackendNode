@@ -23,21 +23,32 @@ exports.login = async (req, res) => {
           },
         });
       } else {
-        const payload = { check: true };
-        const token = jwt.sign(payload, process.env.KEY_SECRET, {
-          expiresIn: 43200,
-          audience: result[0].id.toString(),
-        });
-        res.status(200).send({
-          error: { status: false, code: 0, source: "" },
-          data: {
-            token: token,
-            idUser: result[0].id,
-            email: result[0].email,
-            name: result[0].name,
-            role: result[0].role,
-          },
-        });
+        if (result[0].verified === 0) {
+          res.status(500).send({
+            error: {
+              status: true,
+              code: 54321,
+              source: "userNotVerified",
+            },
+          });
+        } else {
+          const payload = { check: true };
+          const token = jwt.sign(payload, process.env.KEY_SECRET, {
+            expiresIn: 43200,
+            audience: result[0].id.toString(),
+          });
+          res.status(200).send({
+            error: { status: false, code: 0, source: "" },
+            data: {
+              token: token,
+              idUser: result[0].id,
+              email: result[0].email,
+              name: result[0].name,
+              role: result[0].role,
+              avatar: result[0].avatar,
+            },
+          });
+        }
       }
     });
   } else {
@@ -87,6 +98,7 @@ exports.loginToken = async (req, res) => {
               name: result[0].name,
               email: result[0].email,
               role: result[0].role,
+              avatar: result[0].avatar,
             },
           });
         }

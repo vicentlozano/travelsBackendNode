@@ -1,12 +1,16 @@
 "use strict";
+const multer = require("multer");
+
+// Usamos multer sin configuración especial: almacena en memoria
+const upload = multer({ storage: multer.memoryStorage() });
+
 module.exports = function (app) {
-  let register = require("../../controllers/registerController");
-  let jwt = require("../../utils/jwtToken")
+  const register = require("../../controllers/registerController");
 
-  app.route(`/wsTraslations/Register/wsIsValidUrlCode`).get(jwt.isValidToken,register.isValidUrlCode);
-
-  app.route(`/wsTraslations/Register/wsRegisterNewUser`).post(jwt.isValidToken,register.registerNewUser);
+  app
+    .route(`/wsTravels/Users/wsSignUp`)
+    .post(upload.single('avatar'), register.registerNewUser);
+    app
+    .route(`/wsTravels/Users/wsVerifyEmail`)
+    .post(register.verifyEmail);
 };
-
-
-
