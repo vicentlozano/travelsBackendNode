@@ -23,7 +23,6 @@ exports.login = async (req, res) => {
           },
         });
       } else {
-        console.log(result[0].verified);
         if (result[0].verified === 0) {
           res.status(500).send({
             error: {

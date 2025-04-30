@@ -106,8 +106,12 @@ exports.verifyEmail = async (req, res) => {
             },
           });
         } else {
-          
-          if (req.body.token === result[0].register_token) {
+          if(result[0].verified===1){
+            res.status(200).send({
+              error: { status: false, code: 0, source: "user email is allready verified" },
+            });
+          }
+          else if (req.body.token === result[0].register_token) {
           
             const queryActiveUser = `update Users set register_token = '', verified = 1 where email = '${userEmail}'`;
             await db.executeQuery(queryActiveUser, async (error, result) => {
