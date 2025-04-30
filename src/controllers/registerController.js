@@ -81,11 +81,7 @@ exports.registerNewUser = async (req, res) => {
 };
 exports.verifyEmail = async (req, res) => {
   if (Object.hasOwn(req.body, "token") && req.body.token.trim().length > 0) {
-
-
-
- let decoded = null;
-    let data = null;
+    let decoded = null;
     try {
       decoded = await jwt.verify(req.body.token, process.env.KEY_SECRET);
     } catch (error) {
@@ -93,21 +89,15 @@ exports.verifyEmail = async (req, res) => {
         error: {
           status: true,
           code: 54321,
-          source: "wrongCredentials",
+          source: error.message,
         },
       });
     }
     if (decoded) {
       const userEmail = decoded.aud;
-      const query = `select * from Users where email = ${userEmail}`;
-      await db.executeQuery(query, (error, result) => {
-        if (result.recordset.length > 0 && !error) {
-          data = {
-            idUser: result.recordset[0].ID_User,
-            user: result.recordset[0].Email,
-            level: result.recordset[0].AccessLevel,
-          };
-        } else {
+      const query = `select * from Users where email = '${userEmail}'`;
+      await db.executeQuery(query, async (error, result) => {
+        if (error) {
           res.status(500).send({
             error: {
               status: true,
@@ -115,12 +105,45 @@ exports.verifyEmail = async (req, res) => {
               source: "wrongCredentials",
             },
           });
+        } else {
+          console.log(
+            "eueueueueuuee",
+            req.body.token,
+            "1111111111111111111111111111111,",
+            result.register_token
+          );
+          if (req.body.token === result[0].register_token) {
+          
+            const queryActiveUser = `update Users set register_token = '', verified = 1 where email = '${userEmail}'`;
+            await db.executeQuery(queryActiveUser, async (error, result) => {
+              if (error) {
+                res.status(500).send({
+                  error: {
+                    status: true,
+                    code: 54321,
+                    source: "generalError",
+                  },
+                });
+              } else {
+                res.status(200).send({
+                  error: { status: false, code: 0, source: "" },
+                });
+              }
+            });
+          } else {
+            res.status(500).send({
+              error: {
+                status: true,
+                code: 54321,
+                source: "invalidToken",
+              },
+            });
+          }
         }
       });
-
-
-
+    }
   } else {
+    console.log("not decoded");
     res.status(500).send({
       error: {
         status: true,
