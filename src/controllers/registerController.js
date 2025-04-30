@@ -106,12 +106,7 @@ exports.verifyEmail = async (req, res) => {
             },
           });
         } else {
-          console.log(
-            "eueueueueuuee",
-            req.body.token,
-            "1111111111111111111111111111111,",
-            result.register_token
-          );
+          
           if (req.body.token === result[0].register_token) {
           
             const queryActiveUser = `update Users set register_token = '', verified = 1 where email = '${userEmail}'`;
@@ -143,7 +138,6 @@ exports.verifyEmail = async (req, res) => {
       });
     }
   } else {
-    console.log("not decoded");
     res.status(500).send({
       error: {
         status: true,
