@@ -27,6 +27,43 @@ exports.getAllTravels = async (req, res) => {
     }
   });
 };
+exports.getTravelById = async (req, res) => {
+  if (req.query.id) {
+    const query = `
+    SELECT 
+      t.*, 
+      GROUP_CONCAT(tp.place SEPARATOR ', ') AS places
+    FROM travels t
+    LEFT JOIN travel_places tp ON t.id = tp.travel_id
+    WHERE travel_id = ${req.query.id}
+    GROUP BY t.id
+  `;
+    db.executeQuery(query, (error, result) => {
+      if (error || result.length<1) {
+        res.status(500).send({
+          error: {
+            status: true,
+            code: 54321,
+            source: "generalError",
+          },
+        });
+      } else {
+        res.status(200).send({
+          error: { status: false, code: 0, source: "" },
+          data: result[0],
+        });
+      }
+    });
+  } else {
+    res.status(500).send({
+      error: {
+        status: true,
+        code: 54321,
+        source: "invalidParams",
+      },
+    });
+  }
+};
 exports.deleteTravelById = async (req, res) => {
   if (req.query.id) {
     const query = ` delete from travels where id = ${req.query.id}`;
@@ -103,6 +140,37 @@ exports.createTravel = async (req, res) => {
               error: { status: false, code: 0, source: "" },
             });
           }
+        });
+      }
+    });
+  } else {
+    res.status(500).send({
+      error: {
+        status: true,
+        code: 54321,
+        source: "invalidParams",
+      },
+    });
+  }
+};
+exports.updateTravelById = async (req, res) => {
+  console.log(req.body.id)
+
+  if (req.body.id) {
+    const id = req.body.id;
+    const query = ` update travels  set days = 22 where id = ${id}`;
+    db.executeQuery(query, (error, result) => {
+      if (error) {
+        res.status(500).send({
+          error: {
+            status: true,
+            code: 54321,
+            source: "generalError",
+          },
+        });
+      } else {
+        res.status(200).send({
+          error: { status: false, code: 0, source: "" },
         });
       }
     });
