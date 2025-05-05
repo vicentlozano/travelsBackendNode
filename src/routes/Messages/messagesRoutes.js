@@ -5,5 +5,8 @@ module.exports = function (app) {
 
   app
     .route(`/wsTravels/Messages/wsGetMessages`)
-    .get(jwt.isValidToken, messages.getMessagesById);
+    .get(jwt.isValidToken, messages.getMessagesByIdAndFriendId);
+    app
+    .route(`/wsTravels/Messages/wsSendMessageById`)
+    .post(jwt.isValidToken, messages.sendMessageById);
 };
