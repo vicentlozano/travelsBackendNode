@@ -3,7 +3,7 @@ const db = require("../config/db");
 
 exports.getMessagesByIdAndFriendId = async (req, res) => {
   if ("userId" in req.query) {
-    const query = ` select * from messages where sendFrom in(${req.query.userId},${req.query.friendId}) and sendTo in (${req.query.userId},${req.query.friendId}) `;
+    const query = ` select * from messages where sendFrom in(${req.query.userId},${req.query.friendId}) and sendTo in (${req.query.userId},${req.query.friendId}) order by date asc`;
     db.executeQuery(query, (error, result) => {
       if (error) {
         res.status(500).send({
