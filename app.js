@@ -12,7 +12,7 @@ require("dotenv").config();
 const cors = require("cors");
 let express = require("express"),
   app = express(),
-  bodyParser = require("body-parser")
+  bodyParser = require("body-parser");
 jwt = require("jsonwebtoken");
 const port = 7002;
 // for developers
@@ -54,11 +54,13 @@ let login = require("./src/routes/Login/loginRoutes.js");
 let register = require("./src/routes/Register/registerRoutes.js");
 let travels = require("./src/routes/Travels/travelsRoutes.js");
 let messages = require("./src/routes/Messages/messagesRoutes.js");
+let contacts = require("./src/routes/Contacts/ContactsRoutes.js");
 
 login(app);
 register(app);
 messages(app);
 travels(app);
+contacts(app);
 
 app.listen(port, () => {
   console.log(`Backend Travels app listening at http://localhost:${port}`);

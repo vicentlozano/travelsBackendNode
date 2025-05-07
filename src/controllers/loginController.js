@@ -84,7 +84,7 @@ exports.loginToken = async (req, res) => {
         if (error) {
           res.status(500).send({
             error: {
-              status: true,
+              status: true, 
               code: 54321,
               source: "wrongCredentials",
             },
