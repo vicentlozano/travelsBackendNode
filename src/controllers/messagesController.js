@@ -1,5 +1,6 @@
 "use strict";
 const db = require("../config/db");
+const mqtt = require("../config/mqtt");
 
 exports.getMessagesByIdAndFriendId = async (req, res) => {
   if ("userId" in req.query) {
@@ -37,7 +38,9 @@ exports.sendMessageById = async (req, res) => {
     "recipientId" in req.body &&
     req.body.message?.trim().length > 0
   ) {
-    const query = ` insert into messages (message, sendTo, sendFrom) values('${req.body.message}',${req.body.userId},${req.body.recipientId});`;
+    const query = ` insert into messages (message, sendFrom, sendTo) values('${req.body.message}',${req.body.userId},${req.body.recipientId})
+    RETURNING *;
+;`;
     db.executeQuery(query, (error, result) => {
       if (error) {
         res.status(500).send({
@@ -48,6 +51,12 @@ exports.sendMessageById = async (req, res) => {
           },
         });
       } else {
+        let topic = req.body.userId + req.body.recipientId
+        mqtt.publish(
+          `TRAVELS/UPDATES/${topic}`,
+          JSON.stringify(result[0])
+        );
+
         res.status(200).send({
           error: { status: false, code: 0, source: "" },
         });
