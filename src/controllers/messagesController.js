@@ -51,11 +51,11 @@ exports.sendMessageById = async (req, res) => {
           },
         });
       } else {
-        let topic = req.body.userId + req.body.recipientId
-        mqtt.publish(
-          `TRAVELS/UPDATES/${topic}`,
-          JSON.stringify(result[0])
+        const [id1, id2] = [req.body.userId, req.body.recipientId].sort(
+          (a, b) => a - b
         );
+        const topic = `${id1}-${id2}`;
+        mqtt.publish(`TRAVELS/UPDATES/${topic}`, JSON.stringify(result[0]));
 
         res.status(200).send({
           error: { status: false, code: 0, source: "" },
