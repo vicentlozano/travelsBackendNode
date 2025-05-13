@@ -56,9 +56,26 @@ exports.sendMessageById = async (req, res) => {
         );
         const topic = `${id1}-${id2}`;
         mqtt.publish(`TRAVELS/UPDATES/${topic}`, JSON.stringify(result[0]));
-
-        res.status(200).send({
-          error: { status: false, code: 0, source: "" },
+        const queryAlert = `SELECT COUNT(*) AS unreadCount FROM messages WHERE sendTo = ${req.body.recipientId} AND viewed = 0`;
+        db.executeQuery(queryAlert, (error, result2) => {
+          if (error) {
+            res.status(500).send({
+              error: {
+                status: true,
+                code: 54321,
+                source: "generalError",
+              },
+            });
+          } else {
+            mqtt.publish(
+              `TRAVELS/ALERTS/CHAT/${req.body.recipientId}`,
+              JSON.stringify({haveNewMessage: result2[0].unreadCount>0,unreadMessages: result2[0].unreadCount})
+            );
+            console.log(`TRAVELS/ALERTS/CHAT/${req.body.recipientId}`)
+            res.status(200).send({
+              error: { status: false, code: 0, source: "" },
+            });
+          }
         });
       }
     });
