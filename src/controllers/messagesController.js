@@ -69,7 +69,7 @@ exports.sendMessageById = async (req, res) => {
           } else {
             mqtt.publish(
               `TRAVELS/ALERTS/CHAT/${req.body.recipientId}`,
-              JSON.stringify({haveNewMessage: result2[0].unreadCount>0,unreadMessages: result2[0].unreadCount})
+              JSON.stringify({haveNewMessage: result2[0].unreadCount>0,unreadMessages: Number(result2[0].unreadCount)})
             );
             console.log(`TRAVELS/ALERTS/CHAT/${req.body.recipientId}`)
             res.status(200).send({
