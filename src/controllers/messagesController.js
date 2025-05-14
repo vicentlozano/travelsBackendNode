@@ -4,7 +4,7 @@ const mqtt = require("../config/mqtt");
 
 exports.getMessagesByIdAndFriendId = async (req, res) => {
   if ("userId" in req.query) {
-    const query = ` select * from messages where sendFrom in(${req.query.userId},${req.query.friendId}) and sendTo in (${req.query.userId},${req.query.friendId}) order by date asc`;
+    const query = ` select * from messages where sendFrom in(${req.query.userId},${req.query.friendId}) and sendTo in (${req.query.userId},${req.query.friendId}) order by date asc;`;
     db.executeQuery(query, (error, result) => {
       if (error) {
         res.status(500).send({
@@ -15,9 +15,42 @@ exports.getMessagesByIdAndFriendId = async (req, res) => {
           },
         });
       } else {
-        res.status(200).send({
-          error: { status: false, code: 0, source: "" },
-          data: result,
+        const updateQuery = ` update  messages set viewed = true where sendFrom in(${req.query.userId},${req.query.friendId}) and sendTo in (${req.query.userId},${req.query.friendId}) order by date asc;`;
+        db.executeQuery(updateQuery, (error, result1) => {
+          if (error) {
+            res.status(500).send({
+              error: {
+                status: true,
+                code: 54321,
+                source: "generalError",
+              },
+            });
+          } else {
+            const queryAlert = `SELECT COUNT(*) AS unreadCount FROM messages WHERE sendTo = ${req.query.userId} AND viewed = 0`;
+            db.executeQuery(queryAlert, (error, result2) => {
+              if (error) {
+                res.status(500).send({
+                  error: {
+                    status: true,
+                    code: 54321,
+                    source: "generalError",
+                  },
+                });
+              } else {
+                mqtt.publish(
+                  `TRAVELS/ALERTS/CHAT/${req.query.userId}`,
+                  JSON.stringify({
+                    haveNewMessage: result2[0].unreadCount > 0,
+                    unreadMessages: Number(result2[0].unreadCount),
+                  })
+                );
+                res.status(200).send({
+                  error: { status: false, code: 0, source: "" },
+                  data: result,
+                });
+              }
+            });
+          }
         });
       }
     });
@@ -69,9 +102,12 @@ exports.sendMessageById = async (req, res) => {
           } else {
             mqtt.publish(
               `TRAVELS/ALERTS/CHAT/${req.body.recipientId}`,
-              JSON.stringify({haveNewMessage: result2[0].unreadCount>0,unreadMessages: Number(result2[0].unreadCount)})
+              JSON.stringify({
+                haveNewMessage: result2[0].unreadCount > 0,
+                unreadMessages: Number(result2[0].unreadCount),
+              })
             );
-            console.log(`TRAVELS/ALERTS/CHAT/${req.body.recipientId}`)
+            console.log(`TRAVELS/ALERTS/CHAT/${req.body.recipientId}`);
             res.status(200).send({
               error: { status: false, code: 0, source: "" },
             });
