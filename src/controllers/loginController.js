@@ -37,16 +37,30 @@ exports.login = async (req, res) => {
             expiresIn: 43200,
             audience: result[0].id.toString(),
           });
-          res.status(200).send({
-            error: { status: false, code: 0, source: "" },
-            data: {
-              token: token,
-              idUser: result[0].id,
-              email: result[0].email,
-              name: result[0].name,
-              role: result[0].role,
-              avatar: result[0].avatar,
-            },
+          const queryAlert = `SELECT COUNT(*) AS unreadCount FROM messages WHERE sendTo = ${result[0].id} AND viewed = 0`;
+          db.executeQuery(queryAlert, (error, result2) => {
+            if (error) {
+              res.status(500).send({
+                error: {
+                  status: true,
+                  code: 54321,
+                  source: "generalError",
+                },
+              });
+            } else {
+              res.status(200).send({
+                error: { status: false, code: 0, source: "" },
+                data: {
+                  token: token,
+                  idUser: result[0].id,
+                  email: result[0].email,
+                  name: result[0].name,
+                  role: result[0].role,
+                  avatar: result[0].avatar,
+                  newMessages:  Number(result2[0].unreadCount),
+                },
+              });
+            }
           });
         }
       }
@@ -84,7 +98,7 @@ exports.loginToken = async (req, res) => {
         if (error) {
           res.status(500).send({
             error: {
-              status: true, 
+              status: true,
               code: 54321,
               source: "wrongCredentials",
             },
