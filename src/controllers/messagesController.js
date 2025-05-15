@@ -18,7 +18,7 @@ exports.getMessagesByIdAndFriendId = async (req, res) => {
         const updateQuery = ` update  messages set viewed = true where sendFrom in(${req.query.userId},${req.query.friendId}) and sendTo in (${req.query.userId},${req.query.friendId}) order by date asc;`;
         db.executeQuery(updateQuery, (error, result1) => {
           if (error) {
-            res.status(500).send({
+            res.status(500).send({ 
               error: {
                 status: true,
                 code: 54321,
