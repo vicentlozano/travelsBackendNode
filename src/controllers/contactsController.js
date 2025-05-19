@@ -46,3 +46,33 @@ ORDER BY m.last_message IS NULL, m.last_message DESC;
     });
   }
 };
+
+exports.deleteContactById = async (req, res) => {
+  if ("userId" in req.body && "contactId" in req.body) {
+    const query = `delete from contacts where user_id in (${req.body.userId},${req.body.contactId}) and friend_id in( ${req.body.contactId},${req.body.userId})
+`;
+    db.executeQuery(query, (error, result) => {
+      if (error) {
+        res.status(500).send({
+          error: {
+            status: true,
+            code: 54321,
+            source: "generalError",
+          },
+        });
+      } else {
+        res.status(200).send({
+          error: { status: false, code: 0, source: "" },
+        });
+      }
+    });
+  } else {
+    res.status(500).send({
+      error: {
+        status: true,
+        code: 54321,
+        source: "invalidParams",
+      },
+    });
+  }
+};
