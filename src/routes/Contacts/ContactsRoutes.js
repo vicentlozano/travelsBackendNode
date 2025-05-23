@@ -9,4 +9,17 @@ module.exports = function (app) {
   app
     .route(`/wsTravels/Contacts/wsDeleteContactById`)
     .post(jwt.isValidToken, contacts.deleteContactById);
+    app
+    .route(`/wsTravels/Contacts/wsSetRequestById`)
+    .post(jwt.isValidToken, contacts.setRequestById);
+     app
+    .route(`/wsTravels/Contacts/wsSendRequestById`)
+    .post(jwt.isValidToken, contacts.sendRequestById);
+   
+  app
+    .route(`/wsTravels/Contacts/wsGetRequestsById`)
+    .get(jwt.isValidToken, contacts.getRequestsById);
+    app
+    .route(`/wsTravels/Contacts/wsGetFiveContactsById`)
+    .get(jwt.isValidToken, contacts.getFiveContatcs);
 };
