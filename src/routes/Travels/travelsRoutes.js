@@ -10,15 +10,29 @@ module.exports = function (app) {
     .route(`/wsTravels/Travels/wsGetAllTravels`)
     .get(jwt.isValidToken, travels.getAllTravels);
   app
+    .route(`/wsTravels/Travels/wsGetFiendsTravels`)
+    .get(jwt.isValidToken, travels.getFriendsTravels);
+  app
+    .route(`/wsTravels/Travels/wsGetNewPeopleTravels`)
+    .get(jwt.isValidToken, travels.getNewPeopleTravels);
+
+  app
     .route(`/wsTravels/Travels/wsDeleteTravelById`)
     .delete(jwt.isValidToken, travels.deleteTravelById);
+
   app
     .route(`/wsTravels/Travels/wsCreateTravel`)
-    .post(jwt.isValidToken, upload.array('images', 5), travels.createTravel);
+    .post(jwt.isValidToken, upload.array("images", 5), travels.createTravel);
+
   app
     .route(`/wsTravels/Travels/wsUpdateTravelById`)
     .post(jwt.isValidToken, travels.updateTravelById);
+
   app
     .route(`/wsTravels/Travels/wsGetTravelById`)
     .get(jwt.isValidToken, travels.getTravelById);
+
+  app
+    .route(`/wsTravels/Travels/wsGetImageFileFromS3`)
+    .get(jwt.isValidToken, travels.getImageFileDataFromS3);
 };

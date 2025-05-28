@@ -62,6 +62,154 @@ exports.getAllTravels = async (req, res) => {
     }
   });
 };
+exports.getFriendsTravels = async (req, res) => {
+  const userId = req.query.id;
+
+  const query = `
+    SELECT 
+      t.id AS travel_id,
+      t.name,
+      t.price,
+      t.travel_date,
+      t.user_id,
+      t.user_name,
+      tp.id AS place_id,
+      tp.place,
+      tp.image
+    FROM travels t
+    LEFT JOIN travel_places tp ON t.id = tp.travel_id
+    WHERE t.user_id IN (
+      SELECT 
+        CASE 
+          WHEN c.user_id = ${userId} THEN c.friend_id 
+          ELSE c.user_id 
+        END AS friend_id
+      FROM contacts c
+      WHERE (c.user_id = ${userId}  OR c.friend_id = ${userId} )
+        AND c.pending = 0
+    )
+  `;
+
+  db.executeQuery(query, (error, result) => {
+    if (error) {
+      res.status(500).send({
+        error: {
+          status: true,
+          code: 54321,
+          source: "generalError",
+        },
+      });
+    } else {
+      // Agrupar los resultados por travel_id
+      const travelsMap = {};
+      result.forEach((row) => {
+        if (!travelsMap[row.travel_id]) {
+          travelsMap[row.travel_id] = {
+            travel_id: row.travel_id,
+            name: row.name,
+            price: row.price,
+            travel_date: row.travel_date.includes("-")
+              ? {
+                  from: row.travel_date.split("-")[0],
+                  to: row.travel_date.split("-")[1],
+                }
+              : row.travel_date,
+            user_id: row.user_id,
+            user_name: row.user_name,
+            places: [],
+          };
+        }
+        if (row.place_id) {
+          travelsMap[row.travel_id].places.push({
+            place_id: row.place_id,
+            place: row.place,
+            image: row.image,
+          });
+        }
+      });
+      const travels = Object.values(travelsMap);
+      res.status(200).send({
+        error: { status: false, code: 0, source: "" },
+        data: travels,
+      });
+    }
+  });
+};
+exports.getNewPeopleTravels = async (req, res) => {
+  const userId = req.query.id;
+
+  const query = `
+    SELECT 
+      t.id AS travel_id,
+      t.name,
+      t.price,
+      t.travel_date,
+      t.user_id,
+      t.user_name,
+      tp.id AS place_id,
+      tp.place,
+      tp.image
+    FROM travels t
+    LEFT JOIN travel_places tp ON t.id = tp.travel_id
+    WHERE t.user_id NOT IN (
+      SELECT 
+        CASE 
+          WHEN c.user_id = ${userId} THEN c.friend_id 
+          ELSE c.user_id 
+        END AS friend_id
+      FROM contacts c
+      WHERE (c.user_id = ${userId} OR c.friend_id = ${userId})
+        AND c.pending = 0
+    )
+    AND t.user_id != ${userId}
+  `;
+
+  db.executeQuery(query, (error, result) => {
+    if (error) {
+      res.status(500).send({
+        error: {
+          status: true,
+          code: 54321,
+          source: "generalError",
+        },
+      });
+    } else {
+      // Agrupar los resultados por travel_id
+      const travelsMap = {};
+      result.forEach((row) => {
+        if (!travelsMap[row.travel_id]) {
+          travelsMap[row.travel_id] = {
+            travel_id: row.travel_id,
+            name: row.name,
+            price: row.price,
+            travel_date: row.travel_date.includes("-")
+              ? {
+                  from: row.travel_date.split("-")[0],
+                  to: row.travel_date.split("-")[1],
+                }
+              : row.travel_date,
+            user_id: row.user_id,
+            user_name: row.user_name,
+            places: [],
+          };
+        }
+        if (row.place_id) {
+          travelsMap[row.travel_id].places.push({
+            place_id: row.place_id,
+            place: row.place,
+            image: row.image,
+          });
+        }
+      });
+      const travels = Object.values(travelsMap);
+      res.status(200).send({
+        error: { status: false, code: 0, source: "" },
+        data: travels,
+      });
+    }
+  });
+};
+
 exports.getTravelById = async (req, res) => {
   if (req.query.id) {
     const query = `
@@ -107,7 +255,7 @@ exports.deleteTravelById = async (req, res) => {
         let query = `SELECT COUNT(*) as total FROM travel_places WHERE image = '${url}'`;
         db.executeQuery(query, async (error, result) => {
           if (error) {
-           errorFlag = true
+            errorFlag = true;
           } else {
             if (Number(result[0].total) <= 1) {
               await aws.deleteFileFromS3Url(url);
@@ -253,8 +401,6 @@ exports.createTravel = async (req, res) => {
   }
 };
 exports.updateTravelById = async (req, res) => {
-  console.log(req.body.id);
-
   if (req.body.id) {
     const id = req.body.id;
     const query = ` update travels  set days = 22 where id = ${id}`;
@@ -280,6 +426,39 @@ exports.updateTravelById = async (req, res) => {
         code: 54321,
         source: "invalidParams",
       },
+    });
+  }
+};
+exports.getImageFileDataFromS3 = async (req, res) => {
+  const s3Url = req.query["url[url]"];
+
+  if (!s3Url) {
+    return res.status(400).json({
+      error: { status: true, code: 54321, source: "invalidParams" },
+    });
+  }
+
+  try {
+    const key = aws.getKeyFromS3Url(s3Url);
+
+    const command = new aws.GetObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+    });
+
+    const data = await aws.s3.send(command);
+
+    res.setHeader("Content-Type", data.ContentType);
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="${key.split("/").pop()}"`
+    );
+
+    data.Body.pipe(res);
+  } catch (err) {
+    console.error("Error recuperant imatge:", err);
+    res.status(500).json({
+      error: { status: true, code: 54321, source: "s3Error" },
     });
   }
 };

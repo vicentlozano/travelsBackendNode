@@ -1,4 +1,10 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+  S3,
+} = require("@aws-sdk/client-s3");
 require("dotenv").config();
 
 const s3 = new S3Client({
@@ -28,7 +34,7 @@ async function uploadBufferToS3(fileBuffer, fileName, mimeType) {
 // OBTINDRE LA "KEY" A PARTIR DE LA URL
 function getKeyFromS3Url(s3Url) {
   const url = new URL(s3Url);
-  return decodeURIComponent(url.pathname.slice(1)); 
+  return decodeURIComponent(url.pathname.slice(1));
 }
 
 // BORRAR FITXER A PARTIR DE LA URL
@@ -47,6 +53,9 @@ async function deleteFileFromS3Url(s3Url) {
 }
 
 module.exports = {
+  s3,
+  GetObjectCommand,
   uploadBufferToS3,
   deleteFileFromS3Url,
+  getKeyFromS3Url,
 };
