@@ -49,7 +49,7 @@ async function deleteFileFromS3Url(s3Url) {
   const command = new DeleteObjectCommand(deleteParams);
   await s3.send(command);
 
-  console.log(`Fitxer "${key}" eliminat correctament de S3.`);
+  console.log(`Fitxer "${key}" eliminat correctament de S3 .`);
 }
 
 module.exports = {
