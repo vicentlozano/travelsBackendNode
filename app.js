@@ -60,6 +60,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'langi18n', 'X-Requested-With']
 }));
+app.options('*', cors()); // Acceptar preflight
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
