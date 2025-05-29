@@ -74,7 +74,7 @@ function checkNodeMinVersion() {
 
   if (parseInt(currentVersion) < requiredVersion) {
     console.error(
-      `⚠️  Error: Node.js v${requiredVersion} or higher is required. You are currently using v${process.versions.node}.`
+      `⚠️  Error:  Node.js v${requiredVersion} or higher is required. You are currently using v${process.versions.node}.`
     );
     process.exit(1);
   }
