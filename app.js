@@ -55,12 +55,11 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: 'https://green-water-0733aec1e.6.azurestaticapps.net',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'langi18n', 'X-Requested-With']
 }));
-app.options('*', cors()); // Acceptar preflight
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
