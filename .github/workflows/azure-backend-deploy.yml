@@ -23,7 +23,18 @@ jobs:
 
       - name: Build app (if needed)
         run: echo "No build step for backend"
-
+      - name: Create .env file from GitHub Secrets
+        run: |
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} >> .env
+          echo DB_USER=${{ secrets.DB_USER }} >> .env
+          echo DB_PASS=${{ secrets.DB_PASS }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo KEY_SECRET=${{ secrets.KEY_SECRET }} >> .env
+          echo AWS_REGION=${{ secrets.AWS_REGION }} >> .env
+          echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} >> .env
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> .env
+          echo S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }} >> .env
       - name: Azure Login
         uses: azure/login@v1
         with:
