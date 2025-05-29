@@ -16,7 +16,6 @@ let express = require("express"),
 jwt = require("jsonwebtoken");
 const port = process.env.PORT || 7002;
 // for developers
-app.use(cors());
 
 // Increase request size limit to 50 MB to allow receiving base64 imgs
 app.use(express.json({ limit: "50mb" }));
