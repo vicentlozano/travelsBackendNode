@@ -46,4 +46,6 @@ jobs:
         with:
           app-name: travlesBackend
           slot-name: production
+
           package: .
+       
