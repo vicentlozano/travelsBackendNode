@@ -14,38 +14,43 @@ let express = require("express"),
   app = express(),
   bodyParser = require("body-parser");
 jwt = require("jsonwebtoken");
-const port = 7002;
+const port = process.env.PORT || 7002;
 // for developers
-app.use(cors());
+const allowedOrigins = [
+  "https://green-water-0733aec1e.6.azurestaticapps.net",
+  "http://localhost:9000",   
+  "http://127.0.0.1:9000"
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Permitir sin origen (como peticiones de Postman o desde el backend)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS policy: Origin no permitido"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "langi18n",
+    "X-Requested-With",
+    "Accept",
+    "Origin"
+  ],
+  credentials: true,
+};
+
 
 // Increase request size limit to 50 MB to allow receiving base64 imgs
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// Add headers
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "*");
 
-  // Request methods you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-  );
-
-  // Request headers you wish to allow
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type,Authorization,langi18n"
-  );
-
-  // Set to true if you need the website to include cookies in the requests sent
-  // to the API (e.g. in case you use sessions)
-  res.setHeader("Access-Control-Allow-Credentials", true);
-
-  // Pass to next layer of middleware
-  next();
-});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
