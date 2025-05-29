@@ -48,21 +48,14 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 //   // Pass to next layer of middleware
 //   next();
 // });
+
 const allowedOrigins = [
   'https://green-water-0733aec1e.6.azurestaticapps.net',
   'http://localhost:9000'
 ];
 
 app.use(cors({
-  origin: function(origin, callback){
-    // Permetre peticions sense origen (ex. Postman o curl)
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){
-      const msg = `El CORS no està permès per aquest origen: ${origin}`;
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'langi18n', 'X-Requested-With']
