@@ -33,7 +33,7 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'langi18n', 'X-Requested-With']
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
