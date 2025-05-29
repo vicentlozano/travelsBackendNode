@@ -16,50 +16,36 @@ let express = require("express"),
 jwt = require("jsonwebtoken");
 const port = process.env.PORT || 7002;
 // for developers
+app.use(cors());
 
 // Increase request size limit to 50 MB to allow receiving base64 imgs
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// // Add headers
-// app.use(function (req, res, next) {
-//   // Website you wish to allow to connect
-//   res.setHeader(
-//     "Access-Control-Allow-Origin",
-//     "https://green-water-0733aec1e.6.azurestaticapps.net"
-//   );
+// Add headers
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
-//   // Request methods you wish to allow
-//   res.setHeader(
-//     "Access-Control-Allow-Methods",
-//     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
-//   );
+  // Request methods you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
 
-//   // Request headers you wish to allow
-//   res.setHeader(
-//     "Access-Control-Allow-Headers",
-//     "X-Requested-With,content-type,Authorization,langi18n"
-//   );
+  // Request headers you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type,Authorization,langi18n"
+  );
 
-//   // Set to true if you need the website to include cookies in the requests sent
-//   // to the API (e.g. in case you use sessions)
-//   res.setHeader("Access-Control-Allow-Credentials", true);
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
-//   // Pass to next layer of middleware
-//   next();
-// });
-
-const allowedOrigins = [
-  'https://green-water-0733aec1e.6.azurestaticapps.net',
-  'http://localhost:9000'
-];
-
-app.use(cors({
-  origin: 'https://green-water-0733aec1e.6.azurestaticapps.net',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'langi18n', 'X-Requested-With']
-}));
+  // Pass to next layer of middleware
+  next();
+});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -88,7 +74,7 @@ function checkNodeMinVersion() {
 
   if (parseInt(currentVersion) < requiredVersion) {
     console.error(
-      `⚠️  Error: Node.js v${requiredVersion} or higher is required.You are currently using v${process.versions.node}.`
+      `⚠️  Error: Node.js v${requiredVersion} or higher is required. You are currently using v${process.versions.node}.`
     );
     process.exit(1);
   }
