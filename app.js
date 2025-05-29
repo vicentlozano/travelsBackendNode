@@ -17,22 +17,25 @@ jwt = require("jsonwebtoken");
 const port = 7002;
 // for developers
 
-
 // Increase request size limit to 50 MB to allow receiving base64 imgs
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
-app.options('*', cors(corsOptions));
-
 
 // Add headers
+const cors = require('cors');
+
 const corsOptions = {
-  origin: ["https://green-water-0733aec1e.6.azurestaticapps.net", "http://localhost:9000"], // Añade ambos dominios
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "langi18n"],
-  credentials: true
+  origin: [
+    'https://green-water-0733aec1e.6.azurestaticapps.net',
+    'http://localhost:9000'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'langi18n', 'X-Requested-With']
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Per a preflight
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
