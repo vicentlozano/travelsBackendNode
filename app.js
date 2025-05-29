@@ -14,7 +14,7 @@ let express = require("express"),
   app = express(),
   bodyParser = require("body-parser");
 jwt = require("jsonwebtoken");
-const port = 7002;
+const port = process.env.PORT || 7002;
 // for developers
 
 // Increase request size limit to 50 MB to allow receiving base64 imgs
