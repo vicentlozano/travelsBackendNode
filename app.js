@@ -34,7 +34,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Per a preflight
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
