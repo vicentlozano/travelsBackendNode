@@ -10,12 +10,14 @@ BigInt.prototype.toJSON = function () {
 
 require("dotenv").config();
 const cors = require("cors");
-let express = require("express"),
-  app = express(),
-  bodyParser = require("body-parser");
-jwt = require("jsonwebtoken");
+const express = require("express");
+const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+
+const app = express();
 const port = process.env.PORT || 7002;
-// for developers
+
+// Allowed origins for CORS
 const allowedOrigins = [
   "https://green-water-0733aec1e.6.azurestaticapps.net",
   "http://localhost:9000",
@@ -24,13 +26,14 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Permitir sin origen (como peticiones de Postman o desde el backend)
+    // Permitir sin origen (postman, backend, etc)
     if (!origin) return callback(null, true);
 
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error("CORS policy: Origin no permitido"));
+      // No es un error, pero no permetem aquest origen
+      callback(null, false);
     }
   },
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -44,22 +47,29 @@ const corsOptions = {
   ],
   credentials: true,
 };
+
+// Middleware CORS
 app.use(cors(corsOptions));
 
-// Increase request size limit to 50 MB to allow receiving base64 imgs
+// Resposta explícita a preflight OPTIONS per a totes les rutes
+app.options("*", cors(corsOptions));
+
+// Augmentar límit de peticions per poder rebre imatges base64
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-let login = require("./src/routes/Login/loginRoutes.js");
-let register = require("./src/routes/Register/registerRoutes.js");
-let travels = require("./src/routes/Travels/travelsRoutes.js");
-let messages = require("./src/routes/Messages/messagesRoutes.js");
-let contacts = require("./src/routes/Contacts/ContactsRoutes.js");
-let users = require("./src/routes/User/userRoutes.js");
+// Importar rutes
+const login = require("./src/routes/Login/loginRoutes.js");
+const register = require("./src/routes/Register/registerRoutes.js");
+const travels = require("./src/routes/Travels/travelsRoutes.js");
+const messages = require("./src/routes/Messages/messagesRoutes.js");
+const contacts = require("./src/routes/Contacts/ContactsRoutes.js");
+const users = require("./src/routes/User/userRoutes.js");
 
+// Aplicar rutes
 login(app);
 register(app);
 messages(app);
@@ -67,10 +77,23 @@ travels(app);
 contacts(app);
 users(app);
 
+// Middleware per capturar errors, inclòs errors CORS
+app.use(function (err, req, res, next) {
+  if (err) {
+    console.error("Error detected:", err.message);
+    if (err.message.includes("CORS")) {
+      return res.status(403).send("CORS Error: Origen no permès");
+    }
+    return res.status(500).send("Internal Server Error");
+  }
+  next();
+});
+
 app.listen(port, () => {
   console.log(`Backend Travels app listening at http://localhost:${port}`);
 });
 
+// Funció per comprovar versió mínima de Node.js
 function checkNodeMinVersion() {
   const requiredVersion = 22;
   const currentVersion = process.versions.node.split(".")[0];
