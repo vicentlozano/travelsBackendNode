@@ -24,7 +24,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // Add headers
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader("Access-Control-Allow-Origin", "https://green-water-0733aec1e.6.azurestaticapps.net");
+  res.setHeader("Access-Control-Allow-Origin", "*");
 
   // Request methods you wish to allow
   res.setHeader(
