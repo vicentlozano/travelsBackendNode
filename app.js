@@ -23,7 +23,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // Add headers
 const allowedOrigins = [
-  "https://green-water-0733aec1e.6.azurestaticapps.net",
+  "https://main.d1eqcxpofh2s7b.amplifyapp.com",
   "http://localhost:9000",
 ];
 
