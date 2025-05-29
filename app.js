@@ -21,10 +21,12 @@ const port = 7002;
 // Increase request size limit to 50 MB to allow receiving base64 imgs
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.options('*', cors(corsOptions));
+
 
 // Add headers
 const corsOptions = {
-  origin: ["https://green-water-0733aec1e.6.azurestaticapps.net", "http://localhost:3000"], // Añade ambos dominios
+  origin: ["https://green-water-0733aec1e.6.azurestaticapps.net", "http://localhost:9000"], // Añade ambos dominios
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "langi18n"],
   credentials: true
