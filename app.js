@@ -14,7 +14,7 @@ let express = require("express"),
   app = express(),
   bodyParser = require("body-parser");
 jwt = require("jsonwebtoken");
-const port = process.env.PORT || 7002;
+const port = process.env.PORT || 3000;
 // for developers
 
 // Increase request size limit to 50 MB to allow receiving base64 imgs
@@ -54,6 +54,7 @@ let travels = require("./src/routes/Travels/travelsRoutes.js");
 let messages = require("./src/routes/Messages/messagesRoutes.js");
 let contacts = require("./src/routes/Contacts/ContactsRoutes.js");
 let users = require("./src/routes/User/userRoutes.js");
+let health = require("./src/routes/Health/healthRouter.js");
 
 login(app);
 register(app);
@@ -61,6 +62,7 @@ messages(app);
 travels(app);
 contacts(app);
 users(app);
+health(app);
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`Backend Travels app listening at http://0.0.0.0:${port}`);
