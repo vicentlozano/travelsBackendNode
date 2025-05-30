@@ -62,10 +62,9 @@ travels(app);
 contacts(app);
 users(app);
 
-app.listen(port, () => {
-  console.log(`Backend Travels app listening at http://localhost:${port}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Backend Travels app listening at http://0.0.0.0:${port}`);
 });
-
 function checkNodeMinVersion() {
   const requiredVersion = 22;
   const currentVersion = process.versions.node.split(".")[0];
