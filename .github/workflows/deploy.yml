@@ -40,19 +40,20 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         run: |
-          # Obtenim la task definition actual
+          # Obtenim l'ARN de la task definition actual del servei
           TASK_DEF_ARN=$(aws ecs describe-services --cluster $CLUSTER_NAME --services $SERVICE_NAME --query "services[0].taskDefinition" --output text)
 
-          # Exportem task definition en format JSON, modifiquem la imatge amb la nova etiqueta i netegem camps no vàlids
+          # Obtenim la definició JSON completa de la task definition actual
           TASK_DEF_JSON=$(aws ecs describe-task-definition --task-definition $TASK_DEF_ARN --query 'taskDefinition' --output json)
 
-          NEW_TASK_DEF=$(echo $TASK_DEF_JSON | jq --arg IMAGE "$ECR_REPOSITORY:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+          # Modifiquem la imatge a la nova que acabem de pujar, i eliminem camps que no es poden reutilitzar per registrar una nova task definition
+          NEW_TASK_DEF=$(echo $TASK_DEF_JSON | jq --arg IMAGE "${{ steps.login-ecr.outputs.registry }}/${ECR_REPOSITORY}:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
 
-          # Registrem la nova task definition
+          # Registrem la nova task definition amb la imatge actualitzada
           aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEF"
 
-          # Obtenim l'ARN de la nova task definition registrada
+          # Obtenim l'ARN de la nova task definition que acabem de registrar
           NEW_TASK_DEF_ARN=$(aws ecs describe-task-definition --task-definition $ECR_REPOSITORY:$IMAGE_TAG --query 'taskDefinition.taskDefinitionArn' --output text)
 
-          # Actualitzem el servei per forçar un nou desplegament amb la nova task definition
+          # Actualitzem el servei per fer un desplegament nou amb la nova task definition
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
