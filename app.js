@@ -24,6 +24,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // Add headers
 const allowedOrigins = [
   "https://main.d1eqcxpofh2s7b.amplifyapp.com",
+  "https://travels.vilodev.com",
   "http://localhost:9000",
 ];
 
