@@ -150,7 +150,7 @@ exports.setRequestById = async (req, res) => {
 };
 exports.sendRequestById = async (req, res) => {
   if ("userId" in req.body && "contactId" in req.body) {
-    const query = `insert into contacts(user_id, friend_id) values(${req.body.userId},${req.body.friend_id});
+    const query = `insert into contacts(user_id, friend_id) values(${req.body.userId},${req.body.contactId});
 `;
 
     db.executeQuery(query, (error, result) => {
