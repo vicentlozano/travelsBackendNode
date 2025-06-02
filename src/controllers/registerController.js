@@ -80,7 +80,7 @@ exports.registerNewUser = async (req, res) => {
   }
 };
 exports.verifyEmail = async (req, res) => {
-  if (Object.hasOwn(req.body, "token") && req.body.token.trim().length > 0) {
+  if (Object.hasOwn(req.body,"token") && req.body.token.trim().length > 0) {
     let decoded = null;
     try {
       decoded = await jwt.verify(req.body.token, process.env.KEY_SECRET);
@@ -95,8 +95,8 @@ exports.verifyEmail = async (req, res) => {
     }
     if (decoded) {
       const userEmail = decoded.aud;
-      const query = `select * from Users where email = '${userEmail}'`;
-      await db.executeQuery(query, async (error, result) => {
+      const query = `select * from users where email = '${userEmail}'`;
+      db.executeQuery(query, async (error, result) => {
         if (error) {
           res.status(500).send({
             error: {
@@ -113,7 +113,7 @@ exports.verifyEmail = async (req, res) => {
           }
           else if (req.body.token === result[0].register_token) {
           
-            const queryActiveUser = `update Users set register_token = '', verified = 1 where email = '${userEmail}'`;
+            const queryActiveUser = `update users set register_token = '', verified = 1 where email = '${userEmail}'`;
             await db.executeQuery(queryActiveUser, async (error, result) => {
               if (error) {
                 res.status(500).send({
