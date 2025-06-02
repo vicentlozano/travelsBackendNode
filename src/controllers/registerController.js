@@ -60,7 +60,7 @@ exports.registerNewUser = async (req, res) => {
         html = html.replace(/\$userName/g, req.body.email.split("@")[0]);
         html = html.replace(
           /\$clientUrl/g,
-          "http://localhost:9000/#/verifyEmail"
+          "https://travels.vilodev.com/#/verifyEmail"
         );
 
         mail.sendMail(req.body.email, "Verify email user Travel's App", html);
