@@ -23,11 +23,9 @@ services:
   mariadb:
     image: mariadb:10.8
     container_name: mariadb
-    environment:
-      MYSQL_ROOT_PASSWORD: "tu_contraseña_segura"
-      MYSQL_DATABASE: "travel_app"
-      MYSQL_USER: "admin"
-      MYSQL_PASSWORD: "Blackwolf94"
+    env_file:
+      - .env
+
     ports:
       - "3306:3306"
     volumes:
